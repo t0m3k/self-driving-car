@@ -6,11 +6,11 @@ class Car {
     this.height = height;
 
     this.speed = 0;
-    this.acc = 0.03;
-    this.maxSpeed = 4;
+    this.acc = 0.1;
+    this.maxSpeed = 7;
     this.friction = 0.01;
     this.angle = 0;
-    this.turnAngle = 0.03;
+    this.turnAngle = 0.02;
     this.collision = false;
 
     this.sensor = new Sensor(this);
@@ -21,15 +21,12 @@ class Car {
   update(roadBorders) {
     this.#move();
     this.polygon = this.#createPolygon();
-    console.log("Going to assess damage");
 
     this.collision = this.#assessDamage(roadBorders);
-    console.log(this.collision);
     this.sensor.update(roadBorders);
   }
 
   #assessDamage(roadBorders) {
-    console.log("Assesing damage");
     return roadBorders.some((border) => {
       if (polysIntersect(this.polygon, border)) return true;
     });
@@ -69,19 +66,16 @@ class Car {
 
   #move() {
     if (this.controls.forward) {
-      this.speed += this.acc;
-    }
-    if (this.controls.reverse) {
-      this.speed -= this.acc;
-    }
+      this.speed += this.speed < 0 ? this.acc * 1.3 : this.acc;
+    } else if (this.controls.reverse) {
+      this.speed -= this.speed > 0 ? this.acc * 1.3 : this.acc;
+    } else if (Math.abs(this.speed) < this.friction * 50) this.speed = 0;
 
     if (this.speed > this.maxSpeed) this.speed = this.maxSpeed;
     if (this.speed < -this.maxSpeed / 3) this.speed = -this.maxSpeed / 3;
 
     if (this.speed > 0) this.speed -= this.friction;
     if (this.speed < 0) this.speed += this.friction;
-
-    if (Math.abs(this.speed) < this.friction) this.speed = 0;
 
     if (this.speed != 0) {
       const flip = this.speed > 0 ? 1 : -1;
@@ -92,6 +86,7 @@ class Car {
 
     this.x -= Math.sin(this.angle) * this.speed;
     this.y -= Math.cos(this.angle) * this.speed;
+    console.log(this.speed);
   }
 
   draw(ctx) {
