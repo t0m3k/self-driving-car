@@ -6,18 +6,20 @@ class Car {
     this.height = height;
 
     this.speed = 0;
-    this.acc = 0.1;
+    this.acc = 0.03;
     this.maxSpeed = 4;
-    this.friction = 0.02;
-
+    this.friction = 0.01;
     this.angle = 0;
     this.turnAngle = 0.03;
+
+    this.sensor = new Sensor(this);
 
     this.controls = new Controls();
   }
 
-  update() {
+  update(roadBorders) {
     this.#move();
+    this.sensor.update(roadBorders);
   }
 
   #move() {
@@ -57,5 +59,7 @@ class Car {
     ctx.fill();
 
     ctx.restore();
+
+    this.sensor.draw(ctx);
   }
 }
