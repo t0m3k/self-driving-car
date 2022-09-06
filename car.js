@@ -1,13 +1,13 @@
 class Car {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, controlType, maxSpeed = 10) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
 
-        this.speed = 0;
+        this.speed = controlType === "DUMMY" ? maxSpeed / 2 : 0;
         this.acc = 0.08;
-        this.maxSpeed = 10;
+        this.maxSpeed = maxSpeed;
         this.friction = 0.008;
         this.angle = 0;
         this.turnAngle = 0.02;
@@ -15,7 +15,7 @@ class Car {
 
         this.sensor = new Sensor(this);
 
-        this.controls = new Controls();
+        this.controls = new Controls(controlType);
     }
 
     update(roadBorders) {
@@ -94,7 +94,7 @@ class Car {
 
         this.x -= Math.sin(this.angle) * this.speed;
         this.y -= Math.cos(this.angle) * this.speed;
-        console.log(this.speed);
+        console.log(`Speed: ${Math.round(this.speed * 20)} MPH`);
     }
 
     draw(ctx) {
